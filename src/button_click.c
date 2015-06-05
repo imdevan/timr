@@ -12,6 +12,7 @@ static GBitmap *my_icon_play;
 static GBitmap *my_icon_pause;
 static GBitmap *my_icon_settings;
 static GBitmap *my_icon_restart;
+static bool playing;
 
 /* 
 		Set click handlers for different buttons
@@ -22,6 +23,15 @@ static void select_click_handler(ClickRecognizerRef recognizer, void *context) {
 
 static void up_click_handler(ClickRecognizerRef recognizer, void *context) {
   text_layer_set_text(text_layer, "Up");
+	
+	if(playing == false){
+  	action_bar_layer_set_icon(action_bar, BUTTON_ID_UP, my_icon_pause);
+		playing = (bool) true;
+	}else{
+  	action_bar_layer_set_icon(action_bar, BUTTON_ID_UP, my_icon_play);
+		playing = (bool) false;
+	}
+	
 }
 
 static void down_click_handler(ClickRecognizerRef recognizer, void *context) {
@@ -69,6 +79,9 @@ static void window_load(Window *window) {
   action_bar_layer_set_icon(action_bar, BUTTON_ID_UP, my_icon_play);
   action_bar_layer_set_icon(action_bar, BUTTON_ID_SELECT, my_icon_settings);
   action_bar_layer_set_icon(action_bar, BUTTON_ID_DOWN, my_icon_restart);
+	
+	// Set the state to not be playing
+	playing = (bool) false;
 }
 
 
