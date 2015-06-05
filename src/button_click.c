@@ -12,7 +12,12 @@ static GBitmap *my_icon_play;
 static GBitmap *my_icon_pause;
 static GBitmap *my_icon_settings;
 static GBitmap *my_icon_restart;
+
+// To keep track of playing state
 static bool playing;
+
+// To keep track of time
+static int s_time = 0;
 
 /* 
 		Set click handlers for different buttons
@@ -44,6 +49,26 @@ static void click_config_provider(void *context) {
   window_single_click_subscribe(BUTTON_ID_DOWN, down_click_handler);
 }
 
+/*
+		Manage what happens while the timer is running
+*/
+static void tick_handler(struct tm *tick_time, TimeUnits units_changed) {
+  // Use a long-lived buffer
+  static char s_uptime_buffer[32];
+
+  // Get time since launch
+  int seconds = s_time % 60;
+  int minutes = (s_time % 3600) / 60;
+  int hours = s_time / 3600;
+
+  // Update the TextLayer
+  snprintf(s_uptime_buffer, sizeof(s_uptime_buffer), "Uptime: %dh %dm %ds", hours, minutes, seconds);
+  text_layer_set_text(text_layer, s_uptime_buffer);
+
+  // Increment s_uptime
+  s_time++;
+}
+
 
 /* 
 		Manage what happens when the window is loaded
@@ -52,13 +77,14 @@ static void window_load(Window *window) {
 	
 	// Initiate window layer
   Layer *window_layer = window_get_root_layer(window);
-  GRect bounds = layer_get_bounds(window_layer);
-
+  GRect window_bounds = layer_get_bounds(window_layer);
+	
 	// Set default text in text layer
-  text_layer = text_layer_create((GRect) { .origin = { 0, 72 }, .size = { bounds.size.w, 20 } });
-  text_layer_set_text(text_layer, "Press a button");
+  text_layer = text_layer_create((GRect) { .origin = { -10, 72 }, .size = { window_bounds.size.w, 20 } });
   text_layer_set_text_alignment(text_layer, GTextAlignmentCenter);
+  text_layer_set_text(text_layer, "Uptime: 0h 0m 0s");
   layer_add_child(window_layer, text_layer_get_layer(text_layer));
+	
 	
 	// Initialize the action bar:
   action_bar = action_bar_layer_create();
@@ -107,10 +133,13 @@ static void init(void) {
   window_stack_push(window, animated);
 		
 	
+  // Subscribe to TickTimerService
+  tick_timer_service_subscribe(SECOND_UNIT, tick_handler);
+	
 }
 
 /* 
-		Dealocate windows
+		Dealocate window
 */
 static void deinit(void) {
   window_destroy(window);
