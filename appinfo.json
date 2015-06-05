@@ -1,0 +1,60 @@
+{
+    "appKeys": {},
+    "capabilities": [
+        ""
+    ],
+    "companyName": "huapayadevan@gmail.com",
+    "longName": "Assist",
+    "projectType": "native",
+    "resources": {
+        "media": [
+            {
+                "file": "images/pause2.png",
+                "name": "IMAGE_PAUSE2",
+                "type": "png"
+            },
+            {
+                "file": "images/settings2.png",
+                "name": "IMAGE_SETTINGS2",
+                "type": "png"
+            },
+            {
+                "file": "images/play2.png",
+                "name": "IMAGE_PLAY2",
+                "type": "png"
+            },
+            {
+                "file": "images/restart2.png",
+                "name": "IMAGE_RESTART2",
+                "type": "png"
+            },
+            {
+                "file": "images/play.png",
+                "name": "IMAGE_PLAY",
+                "type": "png"
+            },
+            {
+                "file": "images/settings.png",
+                "name": "IMAGE_SETTINGS",
+                "type": "png"
+            },
+            {
+                "file": "images/restart.png",
+                "name": "IMAGE_RESTART",
+                "type": "png"
+            },
+            {
+                "file": "images/pause.png",
+                "name": "IMAGE_PAUSE",
+                "type": "png"
+            }
+        ]
+    },
+    "sdkVersion": "3",
+    "shortName": "Assist",
+    "uuid": "114a3c0a-20cc-46de-a0ea-8cabf46fdd8c",
+    "versionLabel": "1.0",
+    "watchapp": {
+        "watchface": false
+    }
+}
