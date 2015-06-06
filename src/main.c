@@ -1,5 +1,8 @@
 #include <pebble.h>
 
+#define NUM_MENU_SECTIONS 1
+#define NUM_MENU_ITEMS 3
+	
 // The window
 static Window *window;
 
@@ -13,34 +16,110 @@ static GBitmap *my_icon_pause;
 static GBitmap *my_icon_settings;
 static GBitmap *my_icon_restart;
 
+// The menu
+static MenuLayer *menu_layer;
+static Layer *window_layer;
+
 // To keep track of playing state
 static bool playing;
 
 // To keep track of time
 static int s_time = 0;
 
+
+/*
+		Menu set callbbacks
+*/
+static uint16_t menu_get_num_sections_callback(MenuLayer *menu_layer, void *data) {
+  return NUM_MENU_SECTIONS;
+}
+
+static uint16_t menu_get_num_rows_callback(MenuLayer *menu_layer, uint16_t section_index, void *data) {
+  return NUM_MENU_ITEMS;
+}
+
+static void menu_draw_row_callback(GContext* ctx, const Layer *cell_layer, MenuIndex *cell_index, void *data) {
+	
+  // Determine which section we're going to draw in
+  switch (cell_index->section) {
+    case 0:
+		
+      // Use the row to specify which item we'll draw
+      switch (cell_index->row) {
+        case 0:
+          // This is a basic menu item with a title and subtitle
+          menu_cell_basic_draw(ctx, cell_layer, "Set Time", "Duration of timer", NULL);
+          // menu_cell_title_draw(ctx, cell_layer, "Final Item");
+          break;
+        case 1:
+          // This is a basic menu icon with a cycling icon
+          menu_cell_basic_draw(ctx, cell_layer, "Set Interval", "Of vibrations", NULL);
+          break;
+        case 2: 
+          menu_cell_basic_draw(ctx, cell_layer, "Final Warning", "Start double vibrate when this close to the end", NULL);
+          break;
+      }
+      break;
+  }
+}
+
+static void menu_select_callback(MenuLayer *menu_layer, MenuIndex *cell_index, void *data) {
+	
+  // Use the row to specify which item will receive the select action
+  switch (cell_index->row) {
+    // This is the menu item with the cycling icon
+    case 1:
+      // Cycle the icon
+      // s_current_icon = (s_current_icon + 1) % NUM_MENU_ICONS;
+      // After changing the icon, mark the layer to have it updated
+      // layer_mark_dirty(menu_layer_get_layer(menu_layer));
+      break;
+  }
+}
+
 /* 
 		Set click handlers for different buttons
 */
 static void select_click_handler(ClickRecognizerRef recognizer, void *context) {
-  text_layer_set_text(text_layer, "Select");
+	// go to menu
+  // Create the menu layer
+	
+  window_layer = window_get_root_layer(window);
+  GRect bounds = layer_get_frame(window_layer);
+	
+  menu_layer = menu_layer_create(bounds);
+  menu_layer_set_callbacks(menu_layer, NULL, (MenuLayerCallbacks){
+    .get_num_sections = menu_get_num_sections_callback,
+    .get_num_rows = menu_get_num_rows_callback,
+    .draw_row = menu_draw_row_callback,
+    .select_click = menu_select_callback,
+  });
+
+  // Bind the menu layer's click config provider to the window for interactivity
+  menu_layer_set_click_config_onto_window(menu_layer, window);
+
+  layer_add_child(window_layer, menu_layer_get_layer(menu_layer));
+
 }
 
 static void up_click_handler(ClickRecognizerRef recognizer, void *context) {
-  text_layer_set_text(text_layer, "Up");
-	
 	if(playing == false){
   	action_bar_layer_set_icon(action_bar, BUTTON_ID_UP, my_icon_pause);
 		playing = (bool) true;
+		// start the clock
 	}else{
   	action_bar_layer_set_icon(action_bar, BUTTON_ID_UP, my_icon_play);
 		playing = (bool) false;
+		// pause the clock
 	}
+	
 	
 }
 
 static void down_click_handler(ClickRecognizerRef recognizer, void *context) {
-  text_layer_set_text(text_layer, "Down");
+	// restart the clock
+	s_time = 0;
+
 }
 
 static void click_config_provider(void *context) {
@@ -66,8 +145,10 @@ static void tick_handler(struct tm *tick_time, TimeUnits units_changed) {
   text_layer_set_text(text_layer, s_uptime_buffer);
 
   // Increment s_uptime
-  s_time++;
+	if(playing)
+		s_time++;
 }
+
 
 
 /* 
@@ -123,10 +204,12 @@ static void window_unload(Window *window) {
 		Set up app variables
 */
 static void init(void) {
+	
+	// Create window and add loading callback
   window = window_create();
   window_set_click_config_provider(window, click_config_provider);
   window_set_window_handlers(window, (WindowHandlers) {
-	.load = window_load,
+		.load = window_load,
     .unload = window_unload,
   });
   const bool animated = true;
@@ -135,7 +218,6 @@ static void init(void) {
 	
   // Subscribe to TickTimerService
   tick_timer_service_subscribe(SECOND_UNIT, tick_handler);
-	
 }
 
 /* 
