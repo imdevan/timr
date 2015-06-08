@@ -1,17 +1,13 @@
 /*
- * MainMenu.h
+ * MenuWindow.h
  *
- *  Created on: Aug 25, 2013
- *      Author: matej
+ *  Created on: June 8th, 2015
+ *      Author: Devan Huapaya
  */
+#ifndef MENU_H_
+#define MENU_H_
 
-#ifndef MAINMENU_H_
-#define MAINMENU_H_
+void menu_window_init(void);
 
-void main_menu_init(void);
-void main_menu_close(void);
-void show_menu(void);
-void show_old_watchapp(void);
-void show_old_android(void);
 
-#endif /* MAINMENU_H_ */
+#endif /* MENU_H_ */
