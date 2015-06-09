@@ -13,6 +13,21 @@
 #define MENU_WINDOW 1
 #define SET_TIME_WINDOW 2
 	
+// Timer settings
+// ================================
+	
+// Timer
+#define TIMER_START_TIME 600
+#define TIMER_START_TIME 600
+
+// Interval time
+#define INTERVAL_TIME 60
+#define DEFAULT_INTERVAL_TIME 60
+	
+// Final warning
+#define FINAL_WARNING_TIME 60
+#define DEFAULT_FINAL_WARNING_TIME 60
+	
 void setCurWindow(uint8_t newWindow);
 void switchWindow(uint8_t newWindow);
 uint8_t getCurWindow(void);
