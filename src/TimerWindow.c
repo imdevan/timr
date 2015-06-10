@@ -29,12 +29,13 @@ static bool timer_running;
 
 // To keep track of time
 static int s_time = 0;
-
-
 static uint16_t timer_start_time;
 static uint16_t interval_time;
 static uint16_t final_warning_time;
 
+
+// Bool to test if menu was opened (i.e. update start time)
+static bool menu_was_opened;
 
 
 /*
@@ -51,6 +52,8 @@ static void center_click_handler(ClickRecognizerRef recognizer, void* context)
 {
 	if(timer_running)
 		stopTimer();
+	
+	menu_was_opened = true;
 	
 	switchWindow(MENU_WINDOW);
 }
@@ -119,6 +122,11 @@ static void tick_handler(struct tm *tick_time, TimeUnits units_changed) {
 	// Set UI elements
 	updateTextLayer();
 	
+	if(menu_was_opened){
+		menu_was_opened = false;
+		timer_start_time = persist_exists(TIMER_START_TIME) ? persist_read_int(TIMER_START_TIME) : DEFAULT_TIMER_START_TIME;
+		s_time = timer_start_time;
+	}
   // Increment s_uptime
 	if(timer_running)
 		s_time--;
@@ -201,6 +209,8 @@ void timer_window_init(void)
   window_stack_push(window, ANIMATED);
 		
 	
+	menu_was_opened = false;
+	 
   // Subscribe to TickTimerService
   tick_timer_service_subscribe(SECOND_UNIT, tick_handler);
 }

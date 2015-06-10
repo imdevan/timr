@@ -26,12 +26,7 @@ static MenuLayer *s_menu_layer;
 	Button Callbacks
 	========================================================================================
 */
-/*
-static void button_back_single(ClickRecognizerRef recognizer, void* context)
-{
-	window_stack_pop(true);
-}
-*/
+
 
 /*
 	UI Setup
@@ -55,13 +50,13 @@ static void menu_draw_row_callback(GContext* ctx, const Layer *cell_layer, MenuI
       switch (cell_index->row) {
         case 0:
           // This is a basic menu item with a title and subtitle
-          menu_cell_basic_draw(ctx, cell_layer, "Go to Second Window", "Click here to do that", NULL);
+          menu_cell_basic_draw(ctx, cell_layer, "Set Time", "Timer length", NULL);
           break;
         case 1:
-          menu_cell_basic_draw(ctx, cell_layer, "Filler Title", "Filler subtitle", NULL);
+          menu_cell_basic_draw(ctx, cell_layer, "Set Interval", "Vibrate interval", NULL);
           break;
         case 2: 
-          menu_cell_basic_draw(ctx, cell_layer, "Filler Title", "Filler subtitle", NULL);
+          menu_cell_basic_draw(ctx, cell_layer, "Final Warning", "Vibrate twice at time", NULL);
           break;
       }
       break;
