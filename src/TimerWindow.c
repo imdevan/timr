@@ -24,11 +24,16 @@ static GBitmap *my_icon_pause;
 static GBitmap *my_icon_settings;
 static GBitmap *my_icon_restart;
 
-// To keep track of playing state
-static bool playing;
+// To keep track of timer_running state
+static bool timer_running;
 
 // To keep track of time
 static int s_time = 0;
+
+
+static uint16_t timer_start_time;
+static uint16_t interval_time;
+static uint16_t final_warning_time;
 
 
 
@@ -36,6 +41,7 @@ static int s_time = 0;
 	Button Callbacks
 	========================================================================================
 */
+
 static void button_back_single(ClickRecognizerRef recognizer, void* context)
 {
 	window_stack_pop(ANIMATED);
@@ -43,24 +49,29 @@ static void button_back_single(ClickRecognizerRef recognizer, void* context)
 
 static void center_click_handler(ClickRecognizerRef recognizer, void* context)
 {
+	if(timer_running)
+		stopTimer();
+	
 	switchWindow(MENU_WINDOW);
 }
 
 static void up_click_handler(ClickRecognizerRef recognizer, void *context) {
-	if(playing == false){
+	
+	if(timer_running == false){
   	action_bar_layer_set_icon(action_bar, BUTTON_ID_UP, my_icon_pause);
-		playing = (bool) true;
+		timer_running = (bool) true;
 		// start the clock
 	}else{
   	action_bar_layer_set_icon(action_bar, BUTTON_ID_UP, my_icon_play);
-		playing = (bool) false;
+		timer_running = (bool) false;
 		// pause the clock
 	}
+	
 }
 
 static void down_click_handler(ClickRecognizerRef recognizer, void *context) {
 	// restart the clock
-	s_time = 0;
+	s_time = timer_start_time;
 
 }
 
@@ -76,9 +87,19 @@ static void click_config_provider(void *context) {
 	Logic and Operations
 	========================================================================================
 */
+// Stops timer and resets ui
+void stopTimer(){
+	
+	s_time = timer_start_time;
+  action_bar_layer_set_icon(action_bar, BUTTON_ID_UP, my_icon_play);
+	timer_running = (bool) false;
+	
+	updateTextLayer();
+}
 
-// Manage what happens while the timer is running
-static void tick_handler(struct tm *tick_time, TimeUnits units_changed) {
+// Set UI elements
+void updateTextLayer(){
+	
   // Use a long-lived buffer
   static char s_uptime_buffer[32];
 
@@ -88,12 +109,19 @@ static void tick_handler(struct tm *tick_time, TimeUnits units_changed) {
   int hours = s_time / 3600;
 
   // Update the TextLayer
-  snprintf(s_uptime_buffer, sizeof(s_uptime_buffer), "Uptime: %dh %dm %ds", hours, minutes, seconds);
+  snprintf(s_uptime_buffer, sizeof(s_uptime_buffer), "%dh %dm %ds", hours, minutes, seconds);
   text_layer_set_text(text_layer, s_uptime_buffer);
+}
 
+
+// Manage what happens while the timer is running
+static void tick_handler(struct tm *tick_time, TimeUnits units_changed) {
+	// Set UI elements
+	updateTextLayer();
+	
   // Increment s_uptime
-	if(playing)
-		s_time++;
+	if(timer_running)
+		s_time--;
 }
 
 /*
@@ -107,11 +135,20 @@ static void window_load(Window *window) {
   Layer *window_layer = window_get_root_layer(window);
   GRect window_bounds = layer_get_bounds(window_layer);
 	
-	// Set default text in text layer
+	// Get persistant time variables
+	timer_start_time = persist_exists(TIMER_START_TIME) ? persist_read_int(TIMER_START_TIME) : DEFAULT_TIMER_START_TIME;
+	interval_time = persist_exists(INTERVAL_TIME) ? persist_read_int(INTERVAL_TIME) : DEFAULT_INTERVAL_TIME;
+	final_warning_time = persist_exists(FINAL_WARNING_TIME) ? persist_read_int(FINAL_WARNING_TIME) : DEFAULT_FINAL_WARNING_TIME;
+	
+	// Set s_time to start time
+	s_time = timer_start_time;
+	
+	// Create text layer and add it to the window layer
   text_layer = text_layer_create((GRect) { .origin = { -10, 72 }, .size = { window_bounds.size.w, 20 } });
   text_layer_set_text_alignment(text_layer, GTextAlignmentCenter);
-  text_layer_set_text(text_layer, "Uptime: 0h 0m 0s");
   layer_add_child(window_layer, text_layer_get_layer(text_layer));
+	
+	updateTextLayer();
 	
 	
 	// Initialize the action bar:
@@ -134,8 +171,8 @@ static void window_load(Window *window) {
   action_bar_layer_set_icon(action_bar, BUTTON_ID_SELECT, my_icon_settings);
   action_bar_layer_set_icon(action_bar, BUTTON_ID_DOWN, my_icon_restart);
 	
-	// Set the state to not be playing
-	playing = (bool) false;
+	// Set the state to not be running
+	timer_running = (bool) false;
 }
 
 static void window_unload(Window *window)

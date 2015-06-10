@@ -18,7 +18,7 @@
 	
 // Timer
 #define TIMER_START_TIME 600
-#define TIMER_START_TIME 600
+#define DEFAULT_TIMER_START_TIME 600
 
 // Interval time
 #define INTERVAL_TIME 60

@@ -22,9 +22,6 @@ static Layer *window_layer;
 // Menu Layyer
 static MenuLayer *s_menu_layer;
 
-
-
-
 /*
 	Button Callbacks
 	========================================================================================
