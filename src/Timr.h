@@ -9,9 +9,14 @@
 #define TIMR_H_
 	
 #define ANIMATED true
+	
 #define TIMER_WINDOW 0
 #define MENU_WINDOW 1
 #define SET_TIME_WINDOW 2
+	
+#define SET_VIB_INTERVAL 0
+#define SET_FINAL_WARNING 1
+	
 	
 // Timer settings
 // ================================
@@ -21,8 +26,8 @@
 #define DEFAULT_TIMER_START_TIME 600
 
 // Interval time
-#define INTERVAL_TIME 60
-#define DEFAULT_INTERVAL_TIME 60
+#define INTERVAL_TIME 5
+#define DEFAULT_INTERVAL_TIME 5
 	
 // Final warning
 #define FINAL_WARNING_TIME 60

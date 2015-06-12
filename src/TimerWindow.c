@@ -29,6 +29,7 @@ static bool timer_running;
 
 // To keep track of time
 static int s_time = 0;
+
 static uint16_t timer_start_time;
 static uint16_t interval_time;
 static uint16_t final_warning_time;
@@ -109,27 +110,37 @@ void updateTextLayer(){
   // Get time since launch
   int seconds = s_time % 60;
   int minutes = (s_time % 3600) / 60;
-  int hours = s_time / 3600;
 
   // Update the TextLayer
-  snprintf(s_uptime_buffer, sizeof(s_uptime_buffer), "%dh %dm %ds", hours, minutes, seconds);
+  snprintf(s_uptime_buffer, sizeof(s_uptime_buffer), "%dm %ds", minutes, seconds);
   text_layer_set_text(text_layer, s_uptime_buffer);
 }
 
 
 // Manage what happens while the timer is running
 static void tick_handler(struct tm *tick_time, TimeUnits units_changed) {
+	
+	if(timer_running){
+
+  	// Decrease the counter 
+		s_time--;
+		
+		// Vibrate if on interval time
+		if(s_time % interval_time == 0)
+			vibes_short_pulse();
+	}
+	
 	// Set UI elements
 	updateTextLayer();
 	
+	// If the menu was opened
 	if(menu_was_opened){
+		
+		// Reset the start time and counter
 		menu_was_opened = false;
 		timer_start_time = persist_exists(TIMER_START_TIME) ? persist_read_int(TIMER_START_TIME) : DEFAULT_TIMER_START_TIME;
 		s_time = timer_start_time;
 	}
-  // Increment s_uptime
-	if(timer_running)
-		s_time--;
 }
 
 /*

@@ -30,6 +30,8 @@ static uint16_t timer_set_time = 0;
 */
 static void button_back_single(ClickRecognizerRef recognizer, void* context)
 {
+	
+  persist_write_int(TIMER_START_TIME, timer_set_time);
 	window_stack_pop(ANIMATED);
 }
 
@@ -48,13 +50,11 @@ static void center_click_handler(ClickRecognizerRef recognizer, void* context)
 
 static void up_click_handler(ClickRecognizerRef recognizer, void *context) {
 	timer_set_time++;
-  persist_write_int(TIMER_START_TIME, timer_set_time);
 	updateSetTextLayer();
 }
 
 static void down_click_handler(ClickRecognizerRef recognizer, void *context) {
 	timer_set_time--;
-  persist_write_int(TIMER_START_TIME, timer_set_time);
 	updateSetTextLayer();
 
 }
@@ -79,10 +79,9 @@ void updateSetTextLayer(){
   // Get time since launch
   int seconds = timer_set_time % 60;
   int minutes = (timer_set_time % 3600) / 60;
-  int hours = timer_set_time / 3600;
 
   // Update the TextLayer
-  snprintf(s_uptime_buffer, sizeof(s_uptime_buffer), "%dh %dm %ds", hours, minutes, seconds);
+  snprintf(s_uptime_buffer, sizeof(s_uptime_buffer), "%dm %ds", minutes, seconds);
   text_layer_set_text(text_layer, s_uptime_buffer);
 }
 
