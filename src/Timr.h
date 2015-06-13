@@ -33,6 +33,11 @@
 #define FINAL_WARNING_TIME 60
 #define DEFAULT_FINAL_WARNING_TIME 60
 	
+// To determine which set time window the user is on#
+#define SET_TIMER_START_WINDOW 3
+#define SET_TIMER_INTERVAL_WINDOW 4
+#define SET_FINAL_WARNING_WINDOW 5
+	
 void setCurWindow(uint8_t newWindow);
 void switchWindow(uint8_t newWindow);
 uint8_t getCurWindow(void);
