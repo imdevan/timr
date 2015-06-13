@@ -69,12 +69,13 @@ static void menu_select_callback(MenuLayer *menu_layer, MenuIndex *cell_index, v
   switch (cell_index->row) {
     // This is the menu item with the cycling icon
     case 0:
-			switchWindow(2);
+			switchWindow(SET_TIMER_START_WINDOW);
       break;
     case 1:
-			switchWindow(2);
+			switchWindow(SET_TIMER_INTERVAL_WINDOW);
       break;
     case 3:
+			switchWindow(SET_FINAL_WARNING_WINDOW);
       break;
   }
 

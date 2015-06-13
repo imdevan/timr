@@ -12,17 +12,25 @@ void switchWindow(uint8_t newWindow)
 {
 	switch(newWindow)
 	{
-	case 0:
+	case TIMER_WINDOW:
 		curWindow = TIMER_WINDOW;
 		timer_window_init();
 		break;
-	case 1:
+	case MENU_WINDOW:
 		curWindow = MENU_WINDOW;
 		menu_window_init();
 		break;
-	case 2:
+	case SET_TIMER_START_WINDOW:
 		curWindow = SET_TIME_WINDOW;
-		set_time_window_init();
+		set_time_window_init(SET_TIMER_START_WINDOW);
+		break;
+	case SET_TIMER_INTERVAL_WINDOW:
+		curWindow = SET_TIME_WINDOW;
+		set_time_window_init(SET_TIMER_INTERVAL_WINDOW);
+		break;
+	case SET_FINAL_WARNING_WINDOW:
+		curWindow = SET_TIME_WINDOW;
+		set_time_window_init(SET_FINAL_WARNING_WINDOW);
 		break;
 	}
 }

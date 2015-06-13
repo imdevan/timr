@@ -10,12 +10,15 @@
 	
 #define ANIMATED true
 	
+// Used to navigate to different windows 
 #define TIMER_WINDOW 0
 #define MENU_WINDOW 1
 #define SET_TIME_WINDOW 2
-	
-#define SET_VIB_INTERVAL 0
-#define SET_FINAL_WARNING 1
+
+// To indicate which set time window the user is on#
+#define SET_TIMER_START_WINDOW 3
+#define SET_TIMER_INTERVAL_WINDOW 4
+#define SET_FINAL_WARNING_WINDOW 5
 	
 	
 // Timer settings
@@ -33,10 +36,6 @@
 #define FINAL_WARNING_TIME 60
 #define DEFAULT_FINAL_WARNING_TIME 60
 	
-// To determine which set time window the user is on#
-#define SET_TIMER_START_WINDOW 3
-#define SET_TIMER_INTERVAL_WINDOW 4
-#define SET_FINAL_WARNING_WINDOW 5
 	
 void setCurWindow(uint8_t newWindow);
 void switchWindow(uint8_t newWindow);

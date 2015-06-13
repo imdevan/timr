@@ -24,6 +24,9 @@ static GBitmap *my_icon_restart;
 // To timer set time
 static uint16_t timer_set_time = 0;
 
+// Time to be set
+static uint8_t s_time_to_be_set;
+
 /*
 	Button Callbacks
 	========================================================================================
@@ -148,8 +151,10 @@ static void window_unload(Window *window)
 	Window Initiation
 	========================================================================================
 */
-void set_time_window_init(void)
+void set_time_window_init(int time_to_be_set)
 {
+	s_time_to_be_set = time_to_be_set;
+	
 	window = window_create();
 
 	window_set_window_handlers(window, (WindowHandlers) {
