@@ -31,6 +31,9 @@ static uint16_t timer_set_time = 0;
 // Time to be set
 static uint8_t s_time_to_be_set;
 
+// To track which variable is being edited
+static bool field_to_edit;
+
 /*
 	Button Callbacks
 	========================================================================================
@@ -42,18 +45,59 @@ static void button_back_single(ClickRecognizerRef recognizer, void* context)
 	window_stack_pop(ANIMATED);
 }
 
+static void setTextLayerTheme(TextLayer* layer, uint8_t theme){
+	if(theme == DARK){
+		text_layer_set_background_color(layer, GColorBlack);
+		text_layer_set_text_color(layer, GColorWhite);
+	}
+	else if(theme == LIGHT){
+		text_layer_set_background_color(layer, GColorWhite);
+		text_layer_set_text_color(layer, GColorBlack);
+	}
+}
+
 static void center_click_handler(ClickRecognizerRef recognizer, void* context)
 {
-	// Change which field is being editted
+	
+	
+	// Change field to edit to seconds
+	if(field_to_edit == MINUTES){
+		field_to_edit = SECONDS;
+		
+		// Set minutes layer light
+		setTextLayerTheme(minute_text_wrapper, LIGHT);
+		setTextLayerTheme(minute_text_layer, LIGHT);
+		
+		// Set seconds layer dark
+		setTextLayerTheme(second_text_wrapper, DARK);
+		setTextLayerTheme(second_text_layer, DARK);
+		
+	}else{
+		field_to_edit = MINUTES;
+		
+		// Set minutes layer dark
+		setTextLayerTheme(minute_text_wrapper, DARK);
+		setTextLayerTheme(minute_text_layer, DARK);
+		
+		// Set seconds layer light
+		setTextLayerTheme(second_text_wrapper, LIGHT);
+		setTextLayerTheme(second_text_layer, LIGHT);
+		
+		
+	}
+	
+	
 }
 
 static void up_click_handler(ClickRecognizerRef recognizer, void *context) {
-	timer_set_time++;
+	
+	timer_set_time += (field_to_edit == SECONDS) ? 1 : 60;
 	updateSetTextLayer();
 }
 
 static void down_click_handler(ClickRecognizerRef recognizer, void *context) {
-	timer_set_time--;
+	
+	timer_set_time -= (field_to_edit == SECONDS) ? 1 : 60;
 	updateSetTextLayer();
 
 }
@@ -102,6 +146,7 @@ static void initSetTextLayer(){
 	// Initiate window layer
   Layer *window_layer = window_get_root_layer(window);
   GRect window_bounds = layer_get_bounds(window_layer);
+	field_to_edit = MINUTES;
 	
 	// Create minute text layer and add it to the window layer
 	// ====================================
@@ -109,29 +154,35 @@ static void initSetTextLayer(){
 	// wrapper for minutes
   minute_text_wrapper = text_layer_create((GRect) { .origin = { 0, 0 }, .size = { window_bounds.size.w, window_bounds.size.h/2 } });
   text_layer_set_text_alignment(minute_text_wrapper, GTextAlignmentRight);
-	text_layer_set_background_color(minute_text_wrapper, GColorBlack);
+	setTextLayerTheme(minute_text_wrapper, DARK);
+	//text_layer_set_background_color(minute_text_wrapper, GColorBlack);
+	//text_layer_set_text_color(minute_text_wrapper, GColorWhite);
   layer_add_child(window_layer, text_layer_get_layer(minute_text_wrapper));
 	
 	// Actuall minutes text
   minute_text_layer = text_layer_create((GRect) { .origin = { -10, 10 }, .size = { window_bounds.size.w - 20, window_bounds.size.h/2 } });
   text_layer_set_text_alignment(minute_text_layer, GTextAlignmentRight);
-	text_layer_set_background_color(minute_text_layer, GColorBlack);
-	text_layer_set_text_color(minute_text_layer, GColorWhite);
+	setTextLayerTheme(minute_text_layer, DARK);
+	//text_layer_set_background_color(minute_text_layer, GColorBlack);
+	//text_layer_set_text_color(minute_text_layer, GColorWhite);
 	text_layer_set_font(minute_text_layer, fonts_get_system_font(FONT_KEY_BITHAM_42_BOLD));
   layer_add_child(window_layer, text_layer_get_layer(minute_text_layer));
 	
 	
 	// wrapper for seconds
-  second_text_wrapper = text_layer_create((GRect) { .origin = { 0, 0 }, .size = { window_bounds.size.w, window_bounds.size.h/2 } });
+  second_text_wrapper = text_layer_create((GRect) { .origin = { 0, window_bounds.size.h/2  }, .size = { window_bounds.size.w, window_bounds.size.h/2 } });
   text_layer_set_text_alignment(second_text_wrapper, GTextAlignmentRight);
-	text_layer_set_background_color(second_text_wrapper, GColorwhite);
+	setTextLayerTheme(second_text_wrapper, LIGHT);
+  //text_layer_set_background_color(second_text_wrapper, GColorWhite);
+	//text_layer_set_text_color(second_text_wrapper, GColorBlack);
   layer_add_child(window_layer, text_layer_get_layer(second_text_wrapper));
 	
 	// Create second text layer and add it to the window layer
   second_text_layer = text_layer_create((GRect) { .origin = { -10, window_bounds.size.h/2 }, .size = { window_bounds.size.w - 20, window_bounds.size.h/2 } });
   text_layer_set_text_alignment(second_text_layer, GTextAlignmentRight);
-	text_layer_set_text_color(minute_text_layer, GColorBlack);
-	text_layer_set_background_color(minute_text_layer, GColorWhite);
+	setTextLayerTheme(second_text_layer, LIGHT);
+	//text_layer_set_background_color(second_text_layer, GColorWhite);
+	//text_layer_set_text_color(second_text_layer, GColorBlack);
 	text_layer_set_font(second_text_layer, fonts_get_system_font(FONT_KEY_BITHAM_42_LIGHT));
   layer_add_child(window_layer, text_layer_get_layer(second_text_layer));
 	
@@ -171,8 +222,6 @@ static void window_load(Window *window)
   action_bar_layer_set_icon(action_bar, BUTTON_ID_SELECT, my_icon_settings);
   action_bar_layer_set_icon(action_bar, BUTTON_ID_DOWN, my_icon_minus);
 	
-	
-	
 }
 
 static void window_unload(Window *window)
@@ -181,6 +230,10 @@ static void window_unload(Window *window)
 	Do this for all layers:
 	text_layer_destroy(text_layer);
 	*/
+	text_layer_destroy(minute_text_wrapper);
+	text_layer_destroy(minute_text_layer);
+	text_layer_destroy(second_text_wrapper);
+	text_layer_destroy(second_text_layer);
 	window_destroy(window);
 }
 
