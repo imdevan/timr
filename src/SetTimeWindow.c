@@ -16,8 +16,8 @@ static TextLayer *text_layer;
 
 // The action bar
 ActionBarLayer *action_bar;
-static GBitmap *my_icon_play;
-static GBitmap *my_icon_pause;
+static GBitmap *my_icon_plus;
+static GBitmap *my_icon_minus;
 static GBitmap *my_icon_settings;
 static GBitmap *my_icon_restart;
 
@@ -125,15 +125,15 @@ static void window_load(Window *window)
                                              click_config_provider);
 
 	// Load the icons
-	my_icon_play = gbitmap_create_with_resource(RESOURCE_ID_IMAGE_PLUS);
-	my_icon_pause = gbitmap_create_with_resource(RESOURCE_ID_IMAGE_MINUS);
+	my_icon_plus = gbitmap_create_with_resource(RESOURCE_ID_IMAGE_PLUS2);
+	my_icon_minus = gbitmap_create_with_resource(RESOURCE_ID_IMAGE_MINUS2);
 	my_icon_settings = gbitmap_create_with_resource(RESOURCE_ID_IMAGE_SETTINGS2);
 	
   // Set the icons:
   // The loading of the icons is omitted for brevity... See gbitmap_create_with_resource()
-  action_bar_layer_set_icon(action_bar, BUTTON_ID_UP, my_icon_play);
+  action_bar_layer_set_icon(action_bar, BUTTON_ID_UP, my_icon_plus);
   action_bar_layer_set_icon(action_bar, BUTTON_ID_SELECT, my_icon_settings);
-  action_bar_layer_set_icon(action_bar, BUTTON_ID_DOWN, my_icon_restart);
+  action_bar_layer_set_icon(action_bar, BUTTON_ID_DOWN, my_icon_minus);
 	
 	
 	
