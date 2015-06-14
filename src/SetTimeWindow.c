@@ -12,14 +12,18 @@
 static Window *window;
 
 // Where text will show up
-static TextLayer *text_layer;
+static TextLayer *minute_text_wrapper;
+static TextLayer *second_text_wrapper;
+static TextLayer *minute_text_layer;
+static TextLayer *second_text_layer;
+
+
 
 // The action bar
 ActionBarLayer *action_bar;
 static GBitmap *my_icon_plus;
 static GBitmap *my_icon_minus;
 static GBitmap *my_icon_settings;
-static GBitmap *my_icon_restart;
 
 // To timer set time
 static uint16_t timer_set_time = 0;
@@ -40,15 +44,7 @@ static void button_back_single(ClickRecognizerRef recognizer, void* context)
 
 static void center_click_handler(ClickRecognizerRef recognizer, void* context)
 {
-	/*
-	if(timer_running)
-		stopTimer();
-	
-	switchWindow(MENU_WINDOW);
-	*/
-	
-	// Set text in text layer
-  text_layer_set_text(text_layer, "Center");
+	// Change which field is being editted
 }
 
 static void up_click_handler(ClickRecognizerRef recognizer, void *context) {
@@ -77,44 +73,84 @@ static void click_config_provider(void *context) {
 void updateSetTextLayer(){
 	
   // Use a long-lived buffer
-  static char s_uptime_buffer[32];
+  static char s_minute_buffer[32];
+  static char s_second_buffer[32];
 
   // Get time since launch
   int seconds = timer_set_time % 60;
   int minutes = (timer_set_time % 3600) / 60;
 
   // Update the TextLayer
-  snprintf(s_uptime_buffer, sizeof(s_uptime_buffer), "%dm %ds", minutes, seconds);
-  text_layer_set_text(text_layer, s_uptime_buffer);
+  snprintf(s_minute_buffer, sizeof(s_minute_buffer), "%d", minutes);
+  text_layer_set_text(minute_text_layer, s_minute_buffer);
+	
+  snprintf(s_second_buffer, sizeof(s_second_buffer), "%d", seconds);
+  text_layer_set_text(second_text_layer, s_second_buffer);
 }
+
+
 
 
 /*
 	Load and Unload Definitions
 	========================================================================================
 */
-static void window_load(Window *window)
-{
-
+	
+static void initSetTextLayer(){
+	
+	
 	// Initiate window layer
   Layer *window_layer = window_get_root_layer(window);
   GRect window_bounds = layer_get_bounds(window_layer);
 	
-	// Set default text in text layer
-  text_layer = text_layer_create((GRect) { .origin = { -10, 72 }, .size = { window_bounds.size.w, 20 } });
-  text_layer_set_text_alignment(text_layer, GTextAlignmentCenter);
+	// Create minute text layer and add it to the window layer
+	// ====================================
 	
-	// Add text layer to window
-  layer_add_child(window_layer, text_layer_get_layer(text_layer));
+	// wrapper for minutes
+  minute_text_wrapper = text_layer_create((GRect) { .origin = { 0, 0 }, .size = { window_bounds.size.w, window_bounds.size.h/2 } });
+  text_layer_set_text_alignment(minute_text_wrapper, GTextAlignmentRight);
+	text_layer_set_background_color(minute_text_wrapper, GColorBlack);
+  layer_add_child(window_layer, text_layer_get_layer(minute_text_wrapper));
+	
+	// Actuall minutes text
+  minute_text_layer = text_layer_create((GRect) { .origin = { -10, 10 }, .size = { window_bounds.size.w - 20, window_bounds.size.h/2 } });
+  text_layer_set_text_alignment(minute_text_layer, GTextAlignmentRight);
+	text_layer_set_background_color(minute_text_layer, GColorBlack);
+	text_layer_set_text_color(minute_text_layer, GColorWhite);
+	text_layer_set_font(minute_text_layer, fonts_get_system_font(FONT_KEY_BITHAM_42_BOLD));
+  layer_add_child(window_layer, text_layer_get_layer(minute_text_layer));
+	
+	
+	// wrapper for seconds
+  second_text_wrapper = text_layer_create((GRect) { .origin = { 0, 0 }, .size = { window_bounds.size.w, window_bounds.size.h/2 } });
+  text_layer_set_text_alignment(second_text_wrapper, GTextAlignmentRight);
+	text_layer_set_background_color(second_text_wrapper, GColorwhite);
+  layer_add_child(window_layer, text_layer_get_layer(second_text_wrapper));
+	
+	// Create second text layer and add it to the window layer
+  second_text_layer = text_layer_create((GRect) { .origin = { -10, window_bounds.size.h/2 }, .size = { window_bounds.size.w - 20, window_bounds.size.h/2 } });
+  text_layer_set_text_alignment(second_text_layer, GTextAlignmentRight);
+	text_layer_set_text_color(minute_text_layer, GColorBlack);
+	text_layer_set_background_color(minute_text_layer, GColorWhite);
+	text_layer_set_font(second_text_layer, fonts_get_system_font(FONT_KEY_BITHAM_42_LIGHT));
+  layer_add_child(window_layer, text_layer_get_layer(second_text_layer));
+	
+	
+}
+	
+static void window_load(Window *window)
+{
+
 	
 	// Set value of time
 	timer_set_time = persist_exists(TIMER_START_TIME) ? persist_read_int(TIMER_START_TIME) : DEFAULT_TIMER_START_TIME;
 	
 	// Set text in text layer
+	initSetTextLayer();
 	updateSetTextLayer();
 	
 	// Set the action bar
-	// ==================
+	// ====================================
 	
 	// Initialize the action bar:
   action_bar = action_bar_layer_create();
@@ -141,7 +177,10 @@ static void window_load(Window *window)
 
 static void window_unload(Window *window)
 {
+	/*
+	Do this for all layers:
 	text_layer_destroy(text_layer);
+	*/
 	window_destroy(window);
 }
 
