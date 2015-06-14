@@ -9,6 +9,16 @@
     "resources": {
         "media": [
             {
+                "file": "images/action_icon_minus.png",
+                "name": "IMAGE_MINUS",
+                "type": "png"
+            },
+            {
+                "file": "images/action_icon_plus.png",
+                "name": "IMAGE_PLUS",
+                "type": "png"
+            },
+            {
                 "file": "images/pause2.png",
                 "name": "IMAGE_PAUSE2",
                 "type": "png"

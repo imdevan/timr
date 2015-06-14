@@ -16,6 +16,8 @@ static Window *window;
 
 // Where text will show up
 static TextLayer *text_layer;
+static TextLayer *minute_text_layer;
+static TextLayer *second_text_layer;
 
 // The action bar
 ActionBarLayer *action_bar;
@@ -105,15 +107,19 @@ void stopTimer(){
 void updateTextLayer(){
 	
   // Use a long-lived buffer
-  static char s_uptime_buffer[32];
+  static char s_minute_buffer[32];
+  static char s_second_buffer[32];
 
   // Get time since launch
   int seconds = s_time % 60;
   int minutes = (s_time % 3600) / 60;
 
   // Update the TextLayer
-  snprintf(s_uptime_buffer, sizeof(s_uptime_buffer), "%dm %ds", minutes, seconds);
-  text_layer_set_text(text_layer, s_uptime_buffer);
+  snprintf(s_minute_buffer, sizeof(s_minute_buffer), "%d", minutes);
+  text_layer_set_text(minute_text_layer, s_minute_buffer);
+	
+  snprintf(s_second_buffer, sizeof(s_second_buffer), "%d", seconds);
+  text_layer_set_text(second_text_layer, s_second_buffer);
 }
 
 
@@ -147,12 +153,28 @@ static void tick_handler(struct tm *tick_time, TimeUnits units_changed) {
 	Load and Unload Definitions
 	========================================================================================
 */
-
-static void window_load(Window *window) {
+static void initTextLayer(){
+	
 	
 	// Initiate window layer
   Layer *window_layer = window_get_root_layer(window);
   GRect window_bounds = layer_get_bounds(window_layer);
+	
+	// Create minute text layer and add it to the window layer
+  minute_text_layer = text_layer_create((GRect) { .origin = { -10, 10 }, .size = { window_bounds.size.w - 20, window_bounds.size.h/2 } });
+  text_layer_set_text_alignment(minute_text_layer, GTextAlignmentRight);
+	text_layer_set_font(minute_text_layer, fonts_get_system_font(FONT_KEY_BITHAM_42_BOLD));
+  layer_add_child(window_layer, text_layer_get_layer(minute_text_layer));
+	
+	// Create second text layer and add it to the window layer
+  second_text_layer = text_layer_create((GRect) { .origin = { -10, window_bounds.size.h/2 }, .size = { window_bounds.size.w - 20, window_bounds.size.h/2 } });
+  text_layer_set_text_alignment(second_text_layer, GTextAlignmentRight);
+	text_layer_set_font(second_text_layer, fonts_get_system_font(FONT_KEY_BITHAM_42_LIGHT));
+  layer_add_child(window_layer, text_layer_get_layer(second_text_layer));
+	
+	
+}
+static void window_load(Window *window) {
 	
 	// Get persistant time variables
 	timer_start_time = persist_exists(TIMER_START_TIME) ? persist_read_int(TIMER_START_TIME) : DEFAULT_TIMER_START_TIME;
@@ -162,11 +184,8 @@ static void window_load(Window *window) {
 	// Set s_time to start time
 	s_time = timer_start_time;
 	
-	// Create text layer and add it to the window layer
-  text_layer = text_layer_create((GRect) { .origin = { -10, 72 }, .size = { window_bounds.size.w, 20 } });
-  text_layer_set_text_alignment(text_layer, GTextAlignmentCenter);
-  layer_add_child(window_layer, text_layer_get_layer(text_layer));
-	
+	// Initialize text layer
+	initTextLayer();
 	updateTextLayer();
 	
 	

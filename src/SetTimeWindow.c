@@ -125,10 +125,9 @@ static void window_load(Window *window)
                                              click_config_provider);
 
 	// Load the icons
-	my_icon_play = gbitmap_create_with_resource(RESOURCE_ID_IMAGE_PLAY2);
-	my_icon_pause = gbitmap_create_with_resource(RESOURCE_ID_IMAGE_PAUSE2);
+	my_icon_play = gbitmap_create_with_resource(RESOURCE_ID_IMAGE_PLUS);
+	my_icon_pause = gbitmap_create_with_resource(RESOURCE_ID_IMAGE_MINUS);
 	my_icon_settings = gbitmap_create_with_resource(RESOURCE_ID_IMAGE_SETTINGS2);
-	my_icon_restart = gbitmap_create_with_resource(RESOURCE_ID_IMAGE_RESTART2);
 	
   // Set the icons:
   // The loading of the icons is omitted for brevity... See gbitmap_create_with_resource()
