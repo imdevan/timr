@@ -20,6 +20,12 @@
 #define SET_TIMER_INTERVAL_WINDOW 4
 #define SET_FINAL_WARNING_WINDOW 5
 	
+// Used in setting time windows
+#define MINUTES true
+#define SECONDS false
+#define DARK 0
+#define LIGHT 1
+	
 	
 // Timer settings
 // ================================

@@ -160,7 +160,7 @@ static void initSetTextLayer(){
   layer_add_child(window_layer, text_layer_get_layer(minute_text_wrapper));
 	
 	// Actuall minutes text
-  minute_text_layer = text_layer_create((GRect) { .origin = { -10, 10 }, .size = { window_bounds.size.w - 20, window_bounds.size.h/2 } });
+  minute_text_layer = text_layer_create((GRect) { .origin = { -10, 10 }, .size = { window_bounds.size.w - 30, window_bounds.size.h/2 } });
   text_layer_set_text_alignment(minute_text_layer, GTextAlignmentRight);
 	setTextLayerTheme(minute_text_layer, DARK);
 	//text_layer_set_background_color(minute_text_layer, GColorBlack);
@@ -178,7 +178,7 @@ static void initSetTextLayer(){
   layer_add_child(window_layer, text_layer_get_layer(second_text_wrapper));
 	
 	// Create second text layer and add it to the window layer
-  second_text_layer = text_layer_create((GRect) { .origin = { -10, window_bounds.size.h/2 }, .size = { window_bounds.size.w - 20, window_bounds.size.h/2 } });
+  second_text_layer = text_layer_create((GRect) { .origin = { -10, window_bounds.size.h/2 }, .size = { window_bounds.size.w - 30, window_bounds.size.h/2 } });
   text_layer_set_text_alignment(second_text_layer, GTextAlignmentRight);
 	setTextLayerTheme(second_text_layer, LIGHT);
 	//text_layer_set_background_color(second_text_layer, GColorWhite);

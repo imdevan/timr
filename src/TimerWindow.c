@@ -161,13 +161,13 @@ static void initTextLayer(){
   GRect window_bounds = layer_get_bounds(window_layer);
 	
 	// Create minute text layer and add it to the window layer
-  minute_text_layer = text_layer_create((GRect) { .origin = { -10, 10 }, .size = { window_bounds.size.w - 20, window_bounds.size.h/2 } });
+  minute_text_layer = text_layer_create((GRect) { .origin = { -10, 10 }, .size = { window_bounds.size.w - 30, window_bounds.size.h/2 } });
   text_layer_set_text_alignment(minute_text_layer, GTextAlignmentRight);
 	text_layer_set_font(minute_text_layer, fonts_get_system_font(FONT_KEY_BITHAM_42_BOLD));
   layer_add_child(window_layer, text_layer_get_layer(minute_text_layer));
 	
 	// Create second text layer and add it to the window layer
-  second_text_layer = text_layer_create((GRect) { .origin = { -10, window_bounds.size.h/2 }, .size = { window_bounds.size.w - 20, window_bounds.size.h/2 } });
+  second_text_layer = text_layer_create((GRect) { .origin = { -10, window_bounds.size.h/2 }, .size = { window_bounds.size.w - 30, window_bounds.size.h/2 } });
   text_layer_set_text_alignment(second_text_layer, GTextAlignmentRight);
 	text_layer_set_font(second_text_layer, fonts_get_system_font(FONT_KEY_BITHAM_42_LIGHT));
   layer_add_child(window_layer, text_layer_get_layer(second_text_layer));
