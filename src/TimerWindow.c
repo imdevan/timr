@@ -35,7 +35,7 @@ static int s_time = 0;
 static uint16_t timer_start_time;
 static uint16_t interval_time;
 static uint16_t final_warning_time;
-
+static uint16_t check_time;
 
 // Bool to test if menu was opened (i.e. update start time)
 static bool menu_was_opened;
@@ -53,11 +53,11 @@ static void button_back_single(ClickRecognizerRef recognizer, void* context)
 
 static void center_click_handler(ClickRecognizerRef recognizer, void* context)
 {
-	if(timer_running)
+	if(timer_running){
 		stopTimer();
+	}
 	
 	menu_was_opened = true;
-	
 	switchWindow(MENU_WINDOW);
 }
 
@@ -125,6 +125,27 @@ void updateTextLayer(){
 
 // Manage what happens while the timer is running
 static void tick_handler(struct tm *tick_time, TimeUnits units_changed) {
+	
+	// Check if start time has changed
+	check_time = persist_exists(TIMER_START_TIME) ? persist_read_int(TIMER_START_TIME) : DEFAULT_TIMER_START_TIME;
+	if(check_time != timer_start_time){
+		timer_start_time = check_time;
+		s_time = timer_start_time;
+	}
+	
+	// Check if interval time has changed
+	check_time = persist_exists(INTERVAL_TIME) ? persist_read_int(INTERVAL_TIME) : DEFAULT_INTERVAL_TIME;
+	if(check_time != interval_time){
+		interval_time = check_time;
+		s_time = timer_start_time;
+	}
+	
+	// Check if final warning time has changed
+	check_time = persist_exists(FINAL_WARNING_TIME) ? persist_read_int(FINAL_WARNING_TIME) : DEFAULT_FINAL_WARNING_TIME;
+	if(check_time != final_warning_time){
+		final_warning_time = check_time;
+		s_time = timer_start_time;
+	}
 	
 	if(timer_running){
 

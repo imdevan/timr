@@ -31,12 +31,12 @@
 // ================================
 	
 // Timer
-#define TIMER_START_TIME 600
-#define DEFAULT_TIMER_START_TIME 600
+#define TIMER_START_TIME 300
+#define DEFAULT_TIMER_START_TIME 300
 
 // Interval time
-#define INTERVAL_TIME 5
-#define DEFAULT_INTERVAL_TIME 5
+#define INTERVAL_TIME 30
+#define DEFAULT_INTERVAL_TIME 30
 	
 // Final warning
 #define FINAL_WARNING_TIME 60
