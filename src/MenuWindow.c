@@ -74,7 +74,7 @@ static void menu_select_callback(MenuLayer *menu_layer, MenuIndex *cell_index, v
     case 1:
 			switchWindow(SET_TIMER_INTERVAL_WINDOW);
       break;
-    case 3:
+    case 2:
 			switchWindow(SET_FINAL_WARNING_WINDOW);
       break;
   }

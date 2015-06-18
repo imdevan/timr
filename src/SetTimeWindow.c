@@ -41,7 +41,18 @@ static bool field_to_edit;
 static void button_back_single(ClickRecognizerRef recognizer, void* context)
 {
 	
-  persist_write_int(TIMER_START_TIME, timer_set_time);
+	switch(s_time_to_be_set){
+		case SET_TIMER_START_WINDOW: 
+  		persist_write_int(TIMER_START_TIME, timer_set_time);
+		break;
+		case SET_TIMER_INTERVAL_WINDOW: 
+  		persist_write_int(INTERVAL_TIME, timer_set_time);
+		break;
+		case SET_FINAL_WARNING_WINDOW: 
+  		persist_write_int(FINAL_WARNING_TIME, timer_set_time);
+		break;
+	}
+	
 	window_stack_pop(ANIMATED);
 }
 
@@ -194,7 +205,17 @@ static void window_load(Window *window)
 
 	
 	// Set value of time
-	timer_set_time = persist_exists(TIMER_START_TIME) ? persist_read_int(TIMER_START_TIME) : DEFAULT_TIMER_START_TIME;
+	switch(s_time_to_be_set){
+		case SET_TIMER_START_WINDOW: 
+			timer_set_time = persist_exists(TIMER_START_TIME) ? persist_read_int(TIMER_START_TIME) : DEFAULT_TIMER_START_TIME;
+		break;
+		case SET_TIMER_INTERVAL_WINDOW: 
+			timer_set_time = persist_exists(INTERVAL_TIME) ? persist_read_int(INTERVAL_TIME) : DEFAULT_INTERVAL_TIME;
+		break;
+		case SET_FINAL_WARNING_WINDOW: 
+			timer_set_time = persist_exists(FINAL_WARNING_TIME) ? persist_read_int(FINAL_WARNING_TIME) : DEFAULT_FINAL_WARNING_TIME;
+		break;
+	}
 	
 	// Set text in text layer
 	initSetTextLayer();
@@ -214,7 +235,7 @@ static void window_load(Window *window)
 	// Load the icons
 	my_icon_plus = gbitmap_create_with_resource(RESOURCE_ID_IMAGE_PLUS2);
 	my_icon_minus = gbitmap_create_with_resource(RESOURCE_ID_IMAGE_MINUS2);
-	my_icon_settings = gbitmap_create_with_resource(RESOURCE_ID_IMAGE_SETTINGS2);
+	my_icon_settings = gbitmap_create_with_resource(RESOURCE_ID_IMAGE_SWITCH);
 	
   // Set the icons:
   // The loading of the icons is omitted for brevity... See gbitmap_create_with_resource()

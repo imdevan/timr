@@ -9,6 +9,11 @@
     "resources": {
         "media": [
             {
+                "file": "images/switch icon.png",
+                "name": "IMAGE_SWITCH",
+                "type": "png"
+            },
+            {
                 "file": "images/action_icon_minus2.png",
                 "name": "IMAGE_MINUS2",
                 "type": "png"
