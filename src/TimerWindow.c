@@ -155,6 +155,9 @@ static void tick_handler(struct tm *tick_time, TimeUnits units_changed) {
 		// Vibrate if on interval time
 		if(s_time % interval_time == 0)
 			vibes_short_pulse();
+		
+		if(s_time <= 0)
+			stopTimer();
 	}
 	
 	// Set UI elements
